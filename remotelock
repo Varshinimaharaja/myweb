@@ -1,0 +1,123 @@
+package webTests;
+
+import org.testng.annotations.Test;
+
+import webPages.*;
+
+public class AccessTestsUsers extends BaseClass {
+
+	/**
+	 * Adds edits and deletes access user following test ID 78
+	 * 
+	 * @throws Exception
+	 */
+	@Test(enabled = true)
+	public void AddEditDeleteAccessUser_78() throws Exception {
+		LoginPage loginPage = new LoginPage(driver);
+		AccessPage accessPage = new AccessPage(driver);
+		HostedLockPage hostedLockPage = new HostedLockPage(driver);
+		DevicesPage devicesPage = new DevicesPage(driver);
+		LocationsPage locationsPage = new LocationsPage(driver);
+
+		// arrange
+		loginPage.login(Constants.AutomationUser1, Constants.AutomationPass);
+		hostedLockPage.createHostedLock();
+		accessPage.navigateAccessPage();
+		accessPage.validateUserType();
+		accessPage.addUser();
+		accessPage.editUser("Automated Access User", "Automated Access User 1");
+		accessPage.navigateAccessPage();
+		accessPage.validateUserType();
+		accessPage.deleteUser("Automated Access User 1");
+		accessPage.verifyDeleteScreen();
+
+		// clean up
+		hostedLockPage.deleteHostedLock();
+		locationsPage.navigateLocationPage();
+		devicesPage.deleteLocation("Automated Location");
+	}
+
+	/**
+	 * Tests access user page following test case ID 85
+	 * 
+	 * @throws Exception
+	 */
+
+	@Test(enabled = true)
+	public void AccessUserPage_85() throws Exception {
+		LoginPage loginPage = new LoginPage(driver);
+		AccessPage accessPage = new AccessPage(driver);
+		HostedLockPage hostedLockPage = new HostedLockPage(driver);
+		DevicesPage devicesPage = new DevicesPage(driver);
+		LocationsPage locationsPage = new LocationsPage(driver);
+		NotificationsPage notificationsPage = new NotificationsPage(driver);
+
+		// arrange
+		loginPage.login(Constants.AutomationUser1, Constants.AutomationPass);
+		hostedLockPage.createHostedLock();
+		//need email notification contacts
+		notificationsPage.navigateNotifcationsPage();
+		notificationsPage.navigatesContacts();
+		notificationsPage.clickAddContact();
+		notificationsPage.addContact("Automation User","automation_user@remotelock.com");
+		notificationsPage.clickCreateBtn();
+		accessPage.navigateAccessPage();
+		accessPage.validateUserType();
+		accessPage.addUser();
+		accessPage.openAccessUser("Automated Access User");
+		accessPage.addDoorAccesssValidations();
+		accessPage.validateEventAndNotifcation("Automation User", "Automated Access User");
+		accessPage.navigateAccessPage();
+		accessPage.validateUserType();
+		accessPage.deleteUser("Automated Access User");
+		accessPage.verifyDeleteScreen();
+
+		// clean up
+		hostedLockPage.deleteHostedLock();
+		locationsPage.navigateLocationPage();
+		devicesPage.deleteLocation("Automated Location");
+		notificationsPage.navigateNotifcationsPage();
+		notificationsPage.navigatesContacts();
+		notificationsPage.clickDeleteContact("Automation User");
+		notificationsPage.delete("Email Notification Contact");
+	}
+
+	@Test(enabled = true)
+	public void addEditDeleteAccessException_84() throws Exception {
+		LoginPage loginPage = new LoginPage(driver);
+		AccessPage accessPage = new AccessPage(driver);
+
+		// arrange
+		loginPage.login(Constants.AutomationUser1, Constants.AutomationPass);
+		accessPage.navigateAccessPage();
+		accessPage.navigateAccessExceptions();
+		accessPage.addAccessException();
+		accessPage.addDateToException();
+		accessPage.deleteAccessException();
+
+	}
+
+	/**
+	 * Export Filtered Access List to CSV following test case ID 226
+	 * 
+	 * @throws Exception
+	 */
+	@Test(enabled = true)
+	public void ExportAccessListToCSV_226() throws Exception {
+		LoginPage loginPage = new LoginPage(driver);
+		AccessPage accessPage = new AccessPage(driver);
+		FilteringPage filterPage = new FilteringPage(driver);
+
+		// arrange
+		loginPage.login(Constants.AutomationUser1, Constants.AutomationPass);
+		accessPage.navigateAccessPage();
+		filterPage.openFilter();
+		filterPage.verifyFilter(filterPage.btnActiveCheckbox);
+		filterPage.verifyFilter(filterPage.btnUpcomingCheckbox);
+		filterPage.verifyFilter(filterPage.btnDeactivatedCheckbox);
+		filterPage.verifyFilter(filterPage.btnExpiredCheckbox);
+		filterPage.uncheckUpcoming();
+		accessPage.ExportFilteredAccessList();
+
+	}
+}
